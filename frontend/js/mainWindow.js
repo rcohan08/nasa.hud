@@ -52,7 +52,9 @@ var mainWindow = {
         try {
             mainWindow.voiceControl.start();
         }
-        catch (e) { ; }
+        catch (e) {
+            console.log(e);
+        }
         mainWindow.voiceControl.DEBUG = true;
 
     },
