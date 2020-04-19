@@ -1,3 +1,5 @@
+const $ = require('jquery');
+
 var mainWindow = {
 
     //urlprefix: "http://54.242.219.254:3000",
@@ -528,4 +530,3 @@ $(document).ready(function () {
 
 
 });
-

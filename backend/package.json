@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "devstart": "nodemon app.js",
-    "test": "nyc --reporter=lcov --reporter=text-summary --report-dir=.coverage mocha --exit "
+    "test": "nyc --reporter=lcov --reporter=text-summary --report-dir=.coverage mocha --exit"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
