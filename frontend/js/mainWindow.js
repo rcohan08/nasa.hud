@@ -1,27 +1,24 @@
 const $ = require('jquery');
 
 var mainWindow = {
-
     //urlprefix: "http://54.242.219.254:3000",
     urlprefix: "",
-
     steps: [],
     images: [],
     imagePages: [],
     currentStepName: undefined,
     currentImagePage: 0,
     voiceControl: undefined,
-    currentProcedure : undefined,
-
+    currentProcedure: undefined,
     mission: [],
     roles: [],
 
     init: function () {
         console.log(mainWindow.urlprefix + "/hud/api/getFiles");
         $.get({
-            url: mainWindow.urlprefix + "/hud/api/getFiles",
-            dataType : "JSON"
-        })
+                url: mainWindow.urlprefix + "/hud/api/getFiles",
+                dataType: "JSON"
+            })
             .fail(function (error) {
                 console.log(error);
                 alert("Failed to download mission data");
@@ -53,12 +50,10 @@ var mainWindow = {
 
         try {
             mainWindow.voiceControl.start();
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
         }
         mainWindow.voiceControl.DEBUG = true;
-
     },
 
     wordToNumber: function (input) {
@@ -70,12 +65,11 @@ var mainWindow = {
             return 3;
         else if (input === "four" || input === "for" || input === "4")
             return 4;
-        else if (input === "five" )
+        else if (input === "five")
             return 5;
         else if (input === "six" || input === "sex" || input === "sick")
             return 6;
     },
-
 
     showImage: function (input) {
         var word = input.thing;
@@ -86,9 +80,7 @@ var mainWindow = {
             mainWindow.displayImage(mainWindow.imagePages[mainWindow.currentImagePage][0].name);
     },
 
-
     selectProcedure: function () {
-        
         var html = '<div class="container">';
         html += '<div class="card">';
         html += '<div class="cardbody">';
@@ -96,7 +88,7 @@ var mainWindow = {
         html += ' <p class="card-text">Please say &quot;maestro select procedure&quot; and the procedure number to continue</p >';
 
         for (var i = 0; i < mainWindow.mission.length; i++)
-            html += '<p>Procedure ' + ( i + 1 )+ ' : ' + mainWindow.mission[i] + '</p>';
+            html += '<p>Procedure ' + (i + 1) + ' : ' + mainWindow.mission[i] + '</p>';
         html += '</div>';
         html += '</div>';
         html += '</div>';
@@ -109,9 +101,9 @@ var mainWindow = {
         mainWindow.currentProcedure = mainWindow.mission[number - 1];
 
         $.get({
-            url : mainWindow.urlprefix + "/hud/api/roles/" + mainWindow.currentProcedure,
-            dataType: "JSON"
-        })
+                url: mainWindow.urlprefix + "/hud/api/roles/" + mainWindow.currentProcedure,
+                dataType: "JSON"
+            })
             .fail(function (error) {
                 console.log(error);
                 alert("Failed to download mission data");
@@ -123,9 +115,6 @@ var mainWindow = {
     },
 
     selectRole: function () {
-
-
-
         var html = '<div class="container">';
         html += '<div class="card">';
         html += '<div class="cardbody">';
@@ -146,9 +135,9 @@ var mainWindow = {
         var roleName = mainWindow.roles[roleNumber - 1];
         var stepurl = mainWindow.urlprefix + "/hud/api/tasks/" + mainWindow.currentProcedure + "/" + roleName;
         $.get({
-            url: stepurl,
-            dataType: "JSON"
-        })
+                url: stepurl,
+                dataType: "JSON"
+            })
             .fail(function (error) {
                 console.log(error);
                 alert("Failed to download step data");
@@ -156,18 +145,14 @@ var mainWindow = {
             .done(function (data) {
                 mainWindow.start(data);
             });
-
-
     },
 
     start: function (data) {
-
         mainWindow.steps = [];
         mainWindow.images = [];
         mainWindow.imagePages = [];
         mainWindow.currentStepName = undefined;
         mainWindow.currentImagePage = 0;
-
 
         console.log(data);
         mainWindow.images = data.images;
@@ -183,7 +168,6 @@ var mainWindow = {
     getProcedure: function (procedureName) {
         return mainWindow.getFromName(mainWindow.mission, procedureName);
     },
-
 
     getFromName: function (array, nameOfThing) {
         for (var i = 0; i < array.length; i++)
@@ -209,16 +193,14 @@ var mainWindow = {
         html += '<p class="card-text">maestro select role #</p>';
         html += '<p class="card-text">maestro toggle checkbox #</p>';
         html += '<p class="card-text">maestro help</p>';
-
         html += '</div>';
         html += '</div>';
         html += '</div>';
         $('#mainwindow').html(html);
     },
 
-
     displayImage: function (stepName) {
-        var imageData  = mainWindow.getFromName(mainWindow.images, stepName);
+        var imageData = mainWindow.getFromName(mainWindow.images, stepName);
 
         var html = '<div class="container-fuild">';
         html += '<img src="' + imageData + '" class="img-fluid" alt="...">'
@@ -226,7 +208,7 @@ var mainWindow = {
         $('#mainwindow').html(html);
     },
 
-    slideInCheckboxes: function(stepData) {
+    slideInCheckboxes: function (stepData) {
 
         if (stepData.checkboxes === undefined)
             return "";
@@ -245,33 +227,30 @@ var mainWindow = {
         return html;
     },
 
-    
-
-
     linkSteps: function (steps) {
         for (var i = 0; i < steps.length; i++)
-            $.extend(steps[i], { name: "step_" + i });
+            $.extend(steps[i], {
+                name: "step_" + i
+            });
         for (var i = 0; i < steps.length; i++) {
-            $.extend(steps[i], i === 0 ? undefined : { previousStepName: steps[i - 1].name });
-            $.extend(steps[i], i + 1 === steps.length ? undefined : { nextStepName: steps[i + 1].name });
-            $.extend(steps[i], { stepNumber : i });
-
+            $.extend(steps[i], i === 0 ? undefined : {
+                previousStepName: steps[i - 1].name
+            });
+            $.extend(steps[i], i + 1 === steps.length ? undefined : {
+                nextStepName: steps[i + 1].name
+            });
+            $.extend(steps[i], {
+                stepNumber: i
+            });
         }
     },
 
     splitImagesIntoPages: function () {
-
-        var currPage = ["","","",""];
-
-
-
+        var currPage = ["", "", "", ""];
         for (var i = 1; i <= mainWindow.images.length; i++) {
-
             var currentImage = mainWindow.images[i - 1];
-
             var mod = i % 4;
-            currPage[mod] = currentImage;      
-
+            currPage[mod] = currentImage;
             if (mod === 0) {
                 mainWindow.imagePages.push(currPage);
                 currPage = ["", "", "", ""];
@@ -281,55 +260,37 @@ var mainWindow = {
             mainWindow.imagePages.push(currPage);
     },
 
-
     nextStep: function () {
-
         var currStep = mainWindow.getFromName(mainWindow.steps, mainWindow.currentStepName);
-
         console.log(currStep);
-
         console.log(currStep.nextStepName);
-
         if (currStep.nextStepName === undefined)
             mainWindow.display();
-
         mainWindow.jumpToStep(currStep.nextStepName);
     },
 
     previousStep: function () {
         var currStep = mainWindow.getFromName(mainWindow.steps, mainWindow.currentStepName);
-
         if (currStep.previousStepName === undefined)
             return;
-
-
         mainWindow.jumpToStep(currStep.previousStepName);
     },
 
     jumpToStep: function (name) {
-
         mainWindow.currentStepName = name;
         mainWindow.display(mainWindow.currentStepName);
-
     },
 
     nextImagePage: function () {
-
         if (mainWindow.currentImagePage < mainWindow.imagePages.length)
             mainWindow.currentImagePage++;
-
         mainWindow.display(mainWindow.currentStepName);
-
     },
 
     previousImagePage: function () {
-
         if (mainWindow.currentImagePage > 0)
             mainWindow.currentImagePage--;
-
-
-            mainWindow.display(mainWindow.currentStepName);
-
+        mainWindow.display(mainWindow.currentStepName);
     },
 
     displayDefault: function () {
@@ -339,7 +300,6 @@ var mainWindow = {
     display: function (stepName) {
         var html = '<div class="container-fuild">';
         html += '<div class="row" style="margin-right:0px">';
-
         html += '<div class="col">';
 
         //final step stuff
@@ -351,7 +311,6 @@ var mainWindow = {
         html += '</div>';
         html += '<div class="row" style="margin-right:0px">';
         html += '<div class="col">';
-
         html += mainWindow.displayImageThumbnails();
         html += '</div>';
         html += '</div>';
@@ -359,18 +318,14 @@ var mainWindow = {
         $('#mainwindow').html(html);
     },
 
-
     displayStep: function (name) {
         var stepData = mainWindow.getFromName(mainWindow.steps, name);
-
         var html = '<div class="card">';
-
         if (stepData.warning.length > 0) {
             html += '<div class="card-header alert-danger">';
             html += stepData.warning;
             html += '</div>';
         }
-
         if (stepData.caution.length > 0) {
             html += '<div class="card-header alert-warning">';
             html += stepData.caution;
@@ -382,48 +337,34 @@ var mainWindow = {
 
         if (stepData.duration.length > 0)
             html += '<h4 class="card-title">Duration' + stepData.duration + '</h4 >';
-
         if (stepData.text.length > 0)
-            html += stepData.text.reduce(function (output, item) { return output += '<p class="card-text">' + item + '</p>'; });
+            html += stepData.text.reduce(function (output, item) {
+                return output += '<p class="card-text">' + item + '</p>';
+            });
         html += mainWindow.slideInCheckboxes(stepData);
         html += '</div>';
         html += '</div>';
 
-
         return html;
     },
-
-
-
 
     displayFinalStep: function () {
         var html = '<div class="card">';
         html += '<div class="card-body">';
         html += '<h5 class="card-title">Procedure Complete</h5 >';
-        html += '</div>'; 
+        html += '</div>';
         html += '</div>';
         window.setTimeout(mainWindow.selectProcedure, 5000);
         return html;
     },
 
-
-
-
-
-
     displayImageThumbnails() {
-
         var html = '<div class="card">';
-
         if (mainWindow.currentImagePage < 0 || mainWindow.currentImagePage === mainWindow.imagePages.length) {
-
             html += '<div class="card-body">';
             html += 'There are no other images';
             html += '</div>';
-        }
-        else {
-
-        
+        } else {
             html += '<div class="row">';
             html += '<div class="col">';
             if (mainWindow.imagePages[mainWindow.currentImagePage][1] !== "") {
@@ -455,12 +396,8 @@ var mainWindow = {
         return html;
     },
 
-
-
-
     keyhandler: function (event) {
         console.log(event);
-
         if (event.keyCode === 39)
             mainWindow.nextStep();
         else if (event.keyCode === 37)
@@ -468,41 +405,23 @@ var mainWindow = {
     },
 
     toggleCheckbox: function (voiceInput) {
-
         var stepData = mainWindow.getFromName(mainWindow.steps, mainWindow.currentStepName);
-
         var checkboxNumber = mainWindow.wordToNumber(voiceInput.checkboxNumber) - 1;
-
         var checkbox = $('#' + stepData.stepNumber + "_" + checkboxNumber);
         checkbox.prop("checked", !checkbox.prop("checked"));
     }
 
     /*
-
-
-
-
-
-
-
     setup: function (role) {
-
         mainWindow.role = role;
-
         try {
-
-
-
             mainWindow.voiceControl.addCommand("maestro next step", mainWindow.nextStep);
             mainWindow.voiceControl.addCommand("maestro previous step", mainWindow.previousStep);
-
             mainWindow.voiceControl.start();
         }
         catch (e) {
             console.log(e);
         }
-        
-
         mainWindow.render();
     },
 
@@ -511,22 +430,12 @@ var mainWindow = {
         $.get(mainWindow.role + "/" + mainWindow.step + ".html", function (data) {
             $('#mainwindow').html(data);
         });
-
-
     },
-
-
-
-
     */
 };
 
-
-
 $(document).ready(function () {
-
-
     mainWindow.init();
-
-
 });
+
+module.exports = downloadRoles();
